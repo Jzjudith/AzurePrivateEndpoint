@@ -1,7 +1,8 @@
+# network security group
 resource "azurerm_network_security_group" "main" {
-  name                = "Server-NSG"
-  location            = azurerm_resource_group.main.location
-  resource_group_name = azurerm_resource_group.main.name
+  name                = var.network_sec_group
+  location            = var.location
+  resource_group_name = var.resource_group
 
 
   security_rule {
@@ -16,7 +17,7 @@ resource "azurerm_network_security_group" "main" {
     destination_address_prefix = "*"
   }
 
-security_rule {
+  security_rule {
     name                       = "Allow-http"
     priority                   = 112
     direction                  = "Inbound"
@@ -39,10 +40,14 @@ security_rule {
     source_address_prefix      = "VirtualNetwork"
     destination_address_prefix = "Sql"
   }
+  depends_on = [
+    azurerm_resource_group.main
+  ]
 }
- 
-resource "azurerm_network_interface_security_group_association" "dbs" {
-  network_interface_id      = azurerm_network_interface.dbs.id
+
+# network interface-network security group association 
+resource "azurerm_network_interface_security_group_association" "main" {
+  network_interface_id      = azurerm_network_interface.main.id
   network_security_group_id = azurerm_network_security_group.main.id
 }
 

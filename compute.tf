@@ -1,11 +1,11 @@
-resource "azurerm_linux_virtual_machine" "dbs" {
+resource "azurerm_linux_virtual_machine" "main" {
   name                            = "databaseVM"
-  resource_group_name             = azurerm_resource_group.main.name
-  location                        = azurerm_resource_group.main.location
+  resource_group_name             = var.resource_group
+  location                        = var.location
   size                            = "Standard_B1s"
   admin_username                  = "devlab"
   admin_password                  = "Password123"
-  network_interface_ids           = [azurerm_network_interface.dbs.id, ]
+  network_interface_ids           = [azurerm_network_interface.main.id, ]
   disable_password_authentication = false
   user_data                       = filebase64("${path.module}/scripts/mysqlclient.sh")
 

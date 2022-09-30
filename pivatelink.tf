@@ -1,23 +1,26 @@
+# private dns zone
 resource "azurerm_private_dns_zone" "main" {
-  name                = "privatelink.mysql.database.azure.com"
-  resource_group_name = azurerm_resource_group.main.name
+  name                = var.private_dns_zone
+  resource_group_name = var.resource_group
 }
 
+# private dns zone-virtual network link
 resource "azurerm_private_dns_zone_virtual_network_link" "main" {
-name                  = "dns-vnet-link"
-  resource_group_name   = azurerm_resource_group.main.name
-  private_dns_zone_name = azurerm_private_dns_zone.main.name
+  name                  = "dns-vnet-link"
+  resource_group_name   = var.resource_group
+  private_dns_zone_name = var.private_dns_zone
   virtual_network_id    = azurerm_virtual_network.main.id
   registration_enabled  = true
   depends_on            = [azurerm_private_dns_zone.main]
-  
+
 }
 
+# private endpoint
 resource "azurerm_private_endpoint" "main" {
   name                = "dev-lab-pe"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
-  subnet_id           = azurerm_subnet.dbs.id
+  resource_group_name = var.resource_group
+  location            = var.location
+  subnet_id           = azurerm_subnet.main.id
 
   private_dns_zone_group {
     name                 = "default"

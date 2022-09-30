@@ -1,7 +1,8 @@
+# mysql server
 resource "azurerm_mysql_server" "main" {
   name                              = "devscvsqlsvr"
-  resource_group_name               = azurerm_resource_group.main.name
-  location                          = azurerm_resource_group.main.location
+  resource_group_name               = var.resource_group
+  location                          = var.location
   version                           = "8.0"
   administrator_login               = "devlabr"
   administrator_login_password      = "Password123"
@@ -17,14 +18,16 @@ resource "azurerm_mysql_server" "main" {
   tags = {
     environment = "Devops"
   }
-
+  depends_on = [
+    azurerm_resource_group.main
+  ]
 }
 
 
-
+# mysql database
 resource "azurerm_mysql_database" "main" {
   name                = "devsqldb"
-  resource_group_name = azurerm_resource_group.main.name
+  resource_group_name = var.resource_group
   server_name         = azurerm_mysql_server.main.name
   charset             = "utf8"
   collation           = "utf8_unicode_ci"
